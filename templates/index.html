@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="../static/jquery-1.11.0.js"></script>
+  <script src="../static/axios.js"></script>
+  <script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.common.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .btnbox {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .btnbox button {
+      background: #21bafd;
+      font-size: 18px;
+      font-weight: bold;
+      color: aliceblue;
+      padding: 5px;
+      margin: 0 2rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="btcblock">
+    <div class="btnbox">
+      <button id="btcbtn" coin="btc">展示btc数据</button>
+      <button id="usdtbtn" coin="usdt">展示usdt数据</button>
+      <button id="ethbtn" coin="eth">展示eth数据</button>
+      <button id="eosbtn" coin="eos">展示eos数据</button>
+    </div>
+    <div id="btcshow" style="width: 100%; height: 600px;"></div>
+  </div>
+</body>
+
+<script>
+  // 定义echarts
+  var myChart = echarts.init(document.getElementById('btcshow'));
+
+  // 转换时间戳
+  function changeTime(timestamp) {
+    var date = new Date(timestamp * 1000);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+    var M = (date.getMonth() + 1) + '月';
+    var D = date.getDate() + '日 ';
+    var h = date.getHours() + ':';
+    var m = date.getMinutes();
+    return M + D + h + m;
+  }
+
+  // 定义接口前缀
+  const dataUrl = "http://47.100.233.103:6688/otc?"
+
+  // 定义Ajax操作
+  function getSell(coin) {
+    return axios.get(dataUrl + `coin=${coin}&trade=sell`)
+  }
+
+  function getBuy(coin) {
+    return axios.get(dataUrl + `coin=${coin}&trade=buy`)
+  }
+
+  // btc按钮
+  $("#btcbtn").click(function () {
+    let coinstr = $("#btcbtn").attr("coin")
+    axios.all([getSell(coinstr), getBuy(coinstr)])
+      .then(axios.spread(function (sell, buy) {
+        let sella = sell.data;  // 出售
+        let buya = buy.data;  // 购买
+
+        // 改变数据中时间戳
+        sella.map(value => value._id = changeTime(value._id));  // 出售
+
+        buya.map(value => value._id = changeTime(value._id)); // 购买
+
+        sellspricemin = Math.min.apply(null, sella.map(value => value.price)); // 出售最小值
+        sellspricemax = Math.max.apply(null, sella.map(value => value.price)); // 出售最大值
+
+        buyspricemin = Math.min.apply(null, buya.map(value => value.price)); // 购买最小值
+        buyspricemax = Math.max.apply(null, buya.map(value => value.price));  // 购买最大值
+
+        myChart.setOption(showtab(sella, sellspricemin, sellspricemax, buya, buyspricemin, buyspricemax, coinstr));
+      }))
+  })
+
+  // usdt按钮
+  $("#usdtbtn").click(function () {
+    let coinstr = $("#usdtbtn").attr("coin")
+    axios.all([getSell(coinstr), getBuy(coinstr)])
+      .then(axios.spread(function (sell, buy) {
+        let sella = sell.data;  // 出售
+        let buya = buy.data;  // 购买
+
+        // 改变数据中时间戳
+        sella.map(value => value._id = changeTime(value._id));  // 出售
+
+        buya.map(value => value._id = changeTime(value._id)); // 购买
+
+        sellspricemin = Math.min.apply(null, sella.map(value => value.price)); // 出售最小值
+        sellspricemax = Math.max.apply(null, sella.map(value => value.price)); // 出售最大值
+
+        buyspricemin = Math.min.apply(null, buya.map(value => value.price)); // 购买最小值
+        buyspricemax = Math.max.apply(null, buya.map(value => value.price));  // 购买最大值
+
+        myChart.setOption(showtab(sella, sellspricemin, sellspricemax, buya, buyspricemin, buyspricemax, coinstr));
+      }))
+  })
+
+  // eth按钮
+  $("#ethbtn").click(function () {
+    let coinstr = $("#ethbtn").attr("coin")
+    axios.all([getSell(coinstr), getBuy(coinstr)])
+      .then(axios.spread(function (sell, buy) {
+        let sella = sell.data;  // 出售
+        let buya = buy.data;  // 购买
+
+        // 改变数据中时间戳
+        sella.map(value => value._id = changeTime(value._id));  // 出售
+
+        buya.map(value => value._id = changeTime(value._id)); // 购买
+
+        sellspricemin = Math.min.apply(null, sella.map(value => value.price)); // 出售最小值
+        sellspricemax = Math.max.apply(null, sella.map(value => value.price)); // 出售最大值
+
+        buyspricemin = Math.min.apply(null, buya.map(value => value.price)); // 购买最小值
+        buyspricemax = Math.max.apply(null, buya.map(value => value.price));  // 购买最大值
+
+        myChart.setOption(showtab(sella, sellspricemin, sellspricemax, buya, buyspricemin, buyspricemax, coinstr));
+      }))
+  })
+
+  // eos按钮
+  $("#eosbtn").click(function () {
+    let coinstr = $("#eosbtn").attr("coin")
+    axios.all([getSell(coinstr), getBuy(coinstr)])
+      .then(axios.spread(function (sell, buy) {
+        let sella = sell.data;  // 出售
+        let buya = buy.data;  // 购买
+
+        // 改变数据中时间戳
+        sella.map(value => value._id = changeTime(value._id));  // 出售
+
+        buya.map(value => value._id = changeTime(value._id)); // 购买
+
+        sellspricemin = Math.min.apply(null, sella.map(value => value.price)); // 出售最小值
+        sellspricemax = Math.max.apply(null, sella.map(value => value.price)); // 出售最大值
+
+        buyspricemin = Math.min.apply(null, buya.map(value => value.price)); // 购买最小值
+        buyspricemax = Math.max.apply(null, buya.map(value => value.price));  // 购买最大值
+
+        myChart.setOption(showtab(sella, sellspricemin, sellspricemax, buya, buyspricemin, buyspricemax, coinstr));
+      }))
+  })
+
+  // 定义渲染图表界面
+  function showtab(sell, sellmin, sellmax, buy, buymin, buymax, coin) {
+
+    console.log(sell, sellmin, sellmax, buy, buymin, buymax, coin)
+
+    // 购买
+    let sellx = sell.map(item => item._id);
+    let selly = sell.map(item => item.price);
+
+    // 出售
+    let buyx = buy.map(item => item._id);
+    let buyy = buy.map(item => item.price);
+
+    return option = {
+      visualMap: [{
+        show: false,
+        type: 'continuous',
+        seriesIndex: 0,
+        min: 0,
+        max: 400
+      }, {
+        show: false,
+        type: 'continuous',
+        seriesIndex: 1,
+        dimension: 0,
+        min: 0,
+        max: sell.length + 100
+
+      }],
+
+      toolbox: {
+        left: 'right',
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      dataZoom: [{
+        startValue: '2014-01-01'
+      }, {
+        type: 'inside',
+        xAxisIndex: [0, 1]
+      }],
+
+
+
+      title: [{
+        left: 'center',
+        text: `货币${coin}购买`
+      }, {
+        top: '50%',
+        left: 'center',
+        text: `货币${coin}出售`
+      }],
+      tooltip: {
+        trigger: 'axis'
+      },
+      xAxis: [{
+        data: sellx,
+        gridIndex: 0
+      }, {
+        data: buyx,
+        gridIndex: 1
+      }],
+      yAxis: [{
+        splitLine: { show: true },
+        max: sellmax,
+        min: sellmin,
+        name: "今日货币价格 "
+      }, {
+        splitLine: { show: true },
+        max: buymax,
+        min: buymin,
+        scale: true,
+        gridIndex: 1,
+        name: "今日货币价格 "
+      }],
+      grid: [{
+        bottom: '60%'
+      }, {
+        top: '60%'
+      }],
+      series: [{
+        type: 'line',
+        showSymbol: false,
+        data: selly
+      }, {
+        type: 'line',
+        showSymbol: false,
+        data: buyy,
+        xAxisIndex: 1,
+        yAxisIndex: 1
+      }]
+    };
+  }
+</script>
+
+</html>

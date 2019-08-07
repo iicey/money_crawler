@@ -4,7 +4,7 @@ import time
 import pymongo
 import configparser
 
-from flask import Flask, views, jsonify, request
+from flask import Flask, views, jsonify, request, render_template
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -14,6 +14,11 @@ config = configparser.ConfigParser()
 config.read('config.ini', encoding='utf-8')
 host = config.get('localhost_mongodb', 'host')
 port = int(config.get('localhost_mongodb', 'port'))
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
 class OTCHuoBi(views.MethodView):
