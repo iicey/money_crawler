@@ -23,7 +23,7 @@ class HuoBiSpider(scrapy.Spider):
 
     def start_requests(self):
         for x, y in product(['1', '2', '3', '5'], ['sell', 'buy']):
-            yield scrapy.FormRequest(url='https://otc-api-bj.eiijo.cn/v1/data/trade-market',
+            yield scrapy.FormRequest(url='https://otc-api-sz.eiijo.cn/v1/data/trade-market',
                                      formdata={'coinId': x, 'currency': '1', 'tradeType': y, 'currPage': '1',
                                                'payMethod': '0', 'country': '37', 'blockType': 'general',
                                                'online': '1'}, method='GET')
